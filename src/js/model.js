@@ -1,0 +1,69 @@
+import { Cycling, Running } from './helpers.js';
+
+export const state = {
+  workouts: [],
+  lastClick: null,
+};
+
+export const getLocation = function (success, errHandler) {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(success, () => {
+      errHandler(new Error("Couldn't get your location"));
+    });
+  } else {
+    errHandler(new Error('Geo location is not supported by your browser'));
+  }
+};
+
+export const setMapClick = function (mapE) {
+  state.lastClick = mapE;
+};
+
+const validInput = function (...inputs) {
+  return inputs.every(input => Number.isFinite(input));
+};
+const positiveInput = function (...inputs) {
+  return inputs.every(input => input > 0);
+};
+
+const isValidWorkout = function ({
+  type,
+  duration,
+  elevationGain,
+  cadence,
+  distance,
+}) {
+  if (type === 'cycling') {
+    if (
+      !validInput(distance, duration, elevationGain) ||
+      !positiveInput(distance, duration)
+    )
+      throw new Error('Not a valid input');
+    else return { type, duration, distance, elevationGain };
+  } else if (type === 'running') {
+    if (
+      !validInput(distance, duration, cadence) ||
+      !positiveInput(distance, duration, cadence)
+    )
+      throw new Error('Not a valid input');
+    else return { type, duration, distance, cadence };
+  }
+};
+
+export const newWorkout = function (data) {
+  try {
+    let workout;
+    const { lat, lng } = state.lastClick.latlng;
+    data = isValidWorkout(data);
+    if (data.type === 'running') {
+      // prettier-ignore
+      workout = new Running( [lat,lng,],data.distance, data.duration, data.cadence);
+    } else {
+      // prettier-ignore
+      workout = new Cycling([lat,lng,],data.distance, data.duration, data.elevationGain,);
+    }
+    state.workouts.push(workout);
+  } catch (err) {
+    throw new Error(err);
+  }
+};
