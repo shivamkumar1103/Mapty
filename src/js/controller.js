@@ -5,11 +5,18 @@ import workoutView from './views/workoutView.js';
 
 function controlMap() {
   try {
-    model.getLocation(mapView.loadMap.bind(mapView), err => alert(err.message));
+    model.getLocation(afterLoadMap, err => alert(err.message));
     mapView.addHandlerClick(controlMapClick);
   } catch (err) {
     alert(err);
   }
+}
+
+function afterLoadMap(position) {
+  // load map
+  mapView.loadMap(position);
+  // load previous workouts
+  controlSavedWorkouts();
 }
 
 function controlSubmitForm() {
@@ -25,6 +32,8 @@ function controlSubmitForm() {
     mapView.renderPopup(workout);
     // hide form
     formView.hideForm();
+    // update local Storage
+    model.setLocalStorage();
   } catch (err) {
     console.log(err);
   }
@@ -36,14 +45,35 @@ function controlMoveToMarker(id) {
 }
 
 function controlMapClick(mapE) {
+  // store coords of clicked location
   model.setMapClick(mapE);
+  // show form
   formView.showForm();
+}
+
+function controlSavedWorkouts() {
+  // get workouts
+  model.getLocalStorage();
+  // render workouts
+  workoutView.renderWorkouts(model.state.workouts);
+  mapView.renderPopups(model.state.workouts);
+}
+
+function controlDeleteWorkout(id) {
+  // delete workout
+  model.deleteWorkout(id);
+  // remove workout <li>
+  workoutView.removeWorkout(id);
+  // remove popup
+  mapView.removeMarker(id);
+  // update local storage
+  model.setLocalStorage();
 }
 
 const init = function () {
   controlMap();
   formView.addHandlerSubmit(controlSubmitForm);
-  workoutView.addHandlerClick(controlMoveToMarker);
+  workoutView.addHandlerClick(controlMoveToMarker, controlDeleteWorkout);
 };
 
 init();

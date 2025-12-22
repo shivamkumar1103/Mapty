@@ -5,21 +5,41 @@ class workoutView {
 
   renderWorkout(workout) {
     this._genratePreview(workout);
-    this.form.insertAdjacentHTML('afterend', this._html);
+    this.workouts.insertAdjacentHTML('afterbegin', this._html);
   }
 
-  addHandlerClick(handler) {
+  renderWorkouts(workouts) {
+    workouts.forEach(workout => {
+      this.renderWorkout(workout);
+    });
+  }
+
+  addHandlerClick(mapHandler, deleteHandler) {
     this.workouts.addEventListener('click', e => {
-      const workout = e.target.closest('.workout');
-      if (!workout) return;
-      else handler(workout.dataset.id);
+      const workoutEl = e.target.closest('.workout');
+      if (!workoutEl) return;
+
+      const id = workoutEl.dataset.id;
+
+      if (e.target.classList.contains('workout__delete')) {
+        // Delete from state
+        deleteHandler(id);
+        // Remove only the clicked workout from DOM
+        workoutEl.remove();
+      } else {
+        // Move to marker
+        mapHandler(id);
+      }
     });
   }
 
   _genratePreview(workout) {
     this._html = `
         <li class="workout workout--running" data-id="${workout.id}">
+            <div class="workout__header">
             <h2 class="workout__title">${workout.description}</h2>
+            <span class="workout__delete">&times;</span>
+          </div>
             <div class="workout__details">
                 <span class="workout__icon">${
                   workout.type === 'running' ? '🏃‍♂️' : '🚴'
@@ -58,6 +78,11 @@ class workoutView {
           </div>
         </li>`;
     }
+  }
+
+  removeWorkout(id) {
+    const el = this.workouts.querySelector(`[data-id="${id}"]`);
+    if (el) el.remove();
   }
 }
 

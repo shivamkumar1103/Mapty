@@ -98,10 +98,29 @@ a:visited {
   border-left: 5px solid var(--color-brand--1);
 }
 
+.workout__header {
+  grid-column: 1/-1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.workout__delete {
+  font-size: 2.2rem;
+  color: var(--color-light--1);
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  margin-left: 1rem;
+}
+
+.workout__delete:hover {
+  color: red;
+}
+
 .workout__title {
   font-size: 1.7rem;
   font-weight: 600;
-  grid-column: 1 / -1;
 }
 
 .workout__details {
@@ -288,7 +307,7 @@ a:visited {
   }
 
   .workout {
-    grid-template-columns: 1fr 1fr; /* 2 columns instead of 4 */
+    grid-template-columns: 1fr 1fr;
     gap: 1rem;
   }
 
@@ -296,8 +315,16 @@ a:visited {
     font-size: 1.6rem;
   }
 
+  .workout__title {
+    font-size: 1.5rem;
+  }
+
+  .workout__delete {
+    font-size: 1.8rem;
+  }
+
   .form {
-    grid-template-columns: 1fr; /* Stack form inputs vertically */
+    grid-template-columns: 1fr;
   }
 
   .form__label {

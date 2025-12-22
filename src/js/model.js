@@ -67,3 +67,19 @@ export const newWorkout = function (data) {
     throw new Error(err);
   }
 };
+
+export const deleteWorkout = function (id) {
+  state.workouts = state.workouts.filter(
+    workout => workout.id.toString() !== id.toString()
+  );
+};
+
+export const setLocalStorage = function () {
+  localStorage.setItem('workouts', JSON.stringify(state.workouts));
+};
+
+export const getLocalStorage = function () {
+  const workouts = JSON.parse(localStorage.getItem('workouts'));
+  if (!workouts) return;
+  state.workouts = workouts;
+};

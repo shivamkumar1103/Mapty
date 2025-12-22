@@ -2,6 +2,7 @@ class MapView {
   map;
   _form = document.querySelector('.form');
   _clickHandler;
+  _markers = [];
 
   addHandlerClick(handler) {
     this._clickHandler = handler;
@@ -23,7 +24,7 @@ class MapView {
   }
 
   renderPopup(workout) {
-    L.marker(workout.coords)
+    const marker = L.marker(workout.coords)
       .addTo(this.map)
       .bindPopup(
         L.popup({
@@ -36,6 +37,14 @@ class MapView {
       )
       .setPopupContent(`${workout.description}`)
       .openPopup();
+    this._markers.push({ id: workout.id, marker });
+  }
+
+  renderPopups(workouts) {
+    if (!this.map) return;
+    workouts.forEach(workout => {
+      this.renderPopup(workout);
+    });
   }
 
   moveToMarker(workout) {
@@ -45,6 +54,19 @@ class MapView {
         duration: 1,
       },
     });
+  }
+
+  removeMarker(id) {
+    const markerObj = this._markers.find(
+      entry => entry.id.toString() === id.toString()
+    );
+    if (markerObj) {
+      this.map.removeLayer(markerObj.marker);
+
+      this._markers = this._markers.filter(
+        entry => entry.id.toString() !== id.toString()
+      );
+    }
   }
 }
 
