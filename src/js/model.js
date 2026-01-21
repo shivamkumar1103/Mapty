@@ -3,6 +3,7 @@ import { Cycling, Running } from './helpers.js';
 export const state = {
   workouts: [],
   lastClick: null,
+  currentSort: 'date',
 };
 
 export const getLocation = function (success, errHandler) {
@@ -63,6 +64,8 @@ export const newWorkout = function (data) {
       workout = new Cycling([lat,lng,],data.distance, data.duration, data.elevationGain,);
     }
     state.workouts.push(workout);
+
+    return workout;
   } catch (err) {
     throw new Error(err);
   }
@@ -70,8 +73,21 @@ export const newWorkout = function (data) {
 
 export const deleteWorkout = function (id) {
   state.workouts = state.workouts.filter(
-    workout => workout.id.toString() !== id.toString()
+    workout => workout.id.toString() !== id.toString(),
   );
+};
+
+export const sortWorkouts = function () {
+  console.log(this.state.workouts);
+  if (this.state.currentSort === 'date') {
+    this.state.workouts.sort((a, b) => a.id - b.id);
+    console.log('sorted by date');
+  } else if (this.state.currentSort === 'distance') {
+    this.state.workouts.sort((a, b) => a.distance - b.distance);
+    {
+      console.log('sorted by distance');
+    }
+  } else this.state.workouts.sort((a, b) => a.duration - b.duration);
 };
 
 export const setLocalStorage = function () {

@@ -23,13 +23,15 @@ function controlSubmitForm() {
   try {
     const data = formView.getWorkoutDetails();
     // store new workout
-    model.newWorkout(data);
-    // get currentWorkout
-    const workout = model.state.workouts[model.state.workouts.length - 1];
-    // render workout
-    workoutView.renderWorkout(workout);
+    const workout = model.newWorkout(data);
     // render workout maker
     mapView.renderPopup(workout);
+
+    // sort workouts
+    model.sortWorkouts();
+    // render workout
+    workoutView.clearWorkouts();
+    workoutView.renderWorkouts(model.state.workouts);
     // hide form
     formView.hideForm();
     // update local Storage
@@ -54,6 +56,8 @@ function controlMapClick(mapE) {
 function controlSavedWorkouts() {
   // get workouts
   model.getLocalStorage();
+  // sort workouts
+  model.sortWorkouts();
   // render workouts
   workoutView.renderWorkouts(model.state.workouts);
   mapView.renderPopups(model.state.workouts);
@@ -70,10 +74,24 @@ function controlDeleteWorkout(id) {
   model.setLocalStorage();
 }
 
+function sortWorkout(sortInput) {
+  if (model.state.currentSort === sortInput) return;
+  console.log(sortInput);
+  // update current sort
+  model.state.currentSort = sortInput;
+  // sort workouts
+  model.sortWorkouts();
+  // clear workouts
+  workoutView.clearWorkouts();
+  // render workouts
+  workoutView.renderWorkouts(model.state.workouts);
+}
+
 const init = function () {
   controlMap();
   formView.addHandlerSubmit(controlSubmitForm);
   workoutView.addHandlerClick(controlMoveToMarker, controlDeleteWorkout);
+  workoutView.addHandlerSort(sortWorkout);
 };
 
 init();

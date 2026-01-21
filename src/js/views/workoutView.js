@@ -2,6 +2,18 @@ class workoutView {
   _html;
   form = document.querySelector('.form');
   workouts = document.querySelector('.workouts');
+  sortBtn = document.querySelector('.sort__btn');
+  sortInput = document.querySelector('.sort__input');
+
+  clearWorkouts() {
+    this.workouts.innerHTML = '';
+  }
+
+  addHandlerSort(handler) {
+    this.sortBtn.addEventListener('click', () => {
+      handler(this.sortInput.value);
+    });
+  }
 
   renderWorkout(workout) {
     this._genratePreview(workout);
