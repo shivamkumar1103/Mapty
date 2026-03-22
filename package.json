@@ -6,8 +6,8 @@
   "author": "\"Shivam Kumar\"",
   "type": "commonjs",
   "scripts": {
-    "start": "parcel index.html",
-    "build": "parcel build index.html",
+    "start": "node init && parcel index.html",
+    "build": "node init && parcel build index.html",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
